@@ -1,6 +1,6 @@
 import { Box, Chip, Grid, Link, Typography } from '@mui/material';
 import { graphql } from 'gatsby';
-import { Trans, useI18next } from 'gatsby-plugin-react-i18next';
+import { Trans, useI18next, TFunction } from 'gatsby-plugin-react-i18next';
 import React, { useEffect, useState } from 'react';
 import Footer from '../components/footer';
 import FrequentlyUsedMirrorCard from '../components/frequently-used-mirror-card';
@@ -8,9 +8,9 @@ import LanguageIconButton from '../components/language-icon-button';
 import SearchTable from '../components/search-table';
 import Seo from '../components/seo';
 import ThemeIconButton from '../components/theme-icon-button';
-import { Mirror, MirrorDto } from '../types/mirror';
+import { Locale, Mirror, MirrorDto } from '../types/mirror';
 import frequentlyUsedMirror from '../utils/frequently-used-mirror-list';
-import { getUrl } from '../utils/url';
+import getUrl from '../utils/url';
 import { readCache, writeCache } from '../utils/cache';
 import NameIconButton from '../components/name-icon-button';
 import ZjuFalconIcon from '../../resource/icons/zju-falcon.svg';
@@ -39,7 +39,9 @@ interface Data {
   };
 }
 
-const networkMap = {
+const networkMap: {
+  [propName: number]: { text: string; color: 'primary' | 'success' };
+} = {
   0: {
     text: '校外网络',
     color: 'primary',
@@ -76,7 +78,7 @@ async function fetchNetworkMode(): Promise<number> {
 }
 
 const Index = ({ data }: { data: Data }) => {
-  const { language, t } = useI18next();
+  const { language, t }: { language: string; t: TFunction } = useI18next();
 
   const [networkMode, setNetworkMode] = useState<number>(
     readCache('networkMode', 0)
@@ -123,12 +125,13 @@ const Index = ({ data }: { data: Data }) => {
         .filter(d => d.locale === language)
         .map(
           d =>
-            [d.frontmatter.title, new Date(d.frontmatter.date), d.slug] as (
-              | Date
-              | string
-            )[]
+            [d.frontmatter.title, new Date(d.frontmatter.date), d.slug] as [
+              string,
+              Date,
+              string
+            ]
         )
-        .sort((a, b) => b[1] - a[1]),
+        .sort((a, b) => b[1].getTime() - a[1].getTime()),
     [data, language]
   );
 
@@ -148,6 +151,7 @@ const Index = ({ data }: { data: Data }) => {
         columns={{ xs: 1 }}
         sx={{ px: { xs: 4, sm: 8 }, py: 8 }}
       >
+        {/* First part of index: favicon, title and three buttons on the right */}
         <Grid item xs={1}>
           <Box
             sx={{
@@ -219,6 +223,7 @@ const Index = ({ data }: { data: Data }) => {
             </Box>
           </Box>
         </Grid>
+        {/* Second part of index: popular mirrors */}
         <Grid item xs={1}>
           <Typography gutterBottom variant="h5" component="div">
             <Trans>常用镜像</Trans>
@@ -230,8 +235,8 @@ const Index = ({ data }: { data: Data }) => {
                 mirror && (
                   <Grid item xs={1} key={i}>
                     <FrequentlyUsedMirrorCard
-                      name={mirror.name[language]}
-                      desc={mirror.desc[language]}
+                      name={mirror.name[language as Locale]}
+                      desc={mirror.desc[language as Locale]}
                       icon={e.icon}
                       url={getUrl(mirror.docUrl || mirror.url, !!mirror.docUrl)}
                     />
@@ -241,6 +246,7 @@ const Index = ({ data }: { data: Data }) => {
             })}
           </Grid>
         </Grid>
+        {/* Third part of index: recent update */}
         <Grid item xs={1}>
           <Typography gutterBottom variant="h5" component="div">
             <Trans>近期更新</Trans>

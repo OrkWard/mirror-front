@@ -2,11 +2,11 @@ import { Card, Grid, Typography, Tooltip } from '@mui/material';
 import { useI18next } from 'gatsby-plugin-react-i18next';
 import { CardActionArea } from 'gatsby-theme-material-ui';
 import * as React from 'react';
+import VerifiedIcon from '@mui/icons-material/Verified';
 import { Locale, Mirror } from '../types/mirror';
 import StatusIndicator from './status-indicator';
-import { getUrl } from '../utils/url';
+import getUrl from '../utils/url';
 import { usePrefs } from './preferences-context';
-import VerifiedIcon from '@mui/icons-material/Verified';
 import officialCertificatedMirrorList from '../utils/official-certificated-mirror-list';
 
 const SearchItemCard = (props: { queryItem: Mirror }) => {

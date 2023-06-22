@@ -1,5 +1,5 @@
 import { MDXProvider } from '@mdx-js/react';
-import { ArrowBack, ConnectedTvOutlined } from '@mui/icons-material';
+// import { ArrowBack, ConnectedTvOutlined } from '@mui/icons-material';
 import FolderIcon from '@mui/icons-material/Folder';
 import { Box, Grid, Typography } from '@mui/material';
 import Paper from '@mui/material/Paper';
@@ -9,15 +9,15 @@ import { Button } from 'gatsby-theme-material-ui';
 import React, { useEffect, useState } from 'react';
 import Footer from '../components/footer';
 import FileList from '../components/file-list';
-import LanguageIconButton from '../components/language-icon-button';
+// import LanguageIconButton from '../components/language-icon-button';
 import Seo from '../components/seo';
 import StatusIndicator from '../components/status-indicator';
 import ThemeIconButton from '../components/theme-icon-button';
-import { MirrorDto } from '../types/mirror';
+import { MirrorDto, Locale } from '../types/mirror';
 import { Link } from '../utils/i18n-link';
 import components from './components';
 import { readCache, writeCache } from '../utils/cache';
-import { getUrl } from '../utils/url';
+import getUrl from '../utils/url';
 import TitleMirrorIcon from '../utils/title-mirror-icon';
 
 interface Data {
@@ -37,7 +37,7 @@ async function fetchMirror(id: string): Promise<MirrorDto> {
   return json;
 }
 
-const MirrorDoc = ({ data, children }: { data: Data }) => {
+const MirrorDoc = ({ data, children }: { data: Data; children: any }) => {
   const { language } = useI18next();
 
   const defaultData = {
@@ -48,21 +48,23 @@ const MirrorDoc = ({ data, children }: { data: Data }) => {
     },
     status: 'unknown',
   } as MirrorDto;
-  const mirrorId = data.document.frontmatter.mirrorId;
+  const mirrorId: string = defaultData.id;
 
   const [mirror, setMirror] = useState<MirrorDto>(
     readCache(`mirrors_${mirrorId}`, defaultData)
   );
   useEffect(() => {
-    fetchMirror(mirrorId)
-      .then(d => setMirror(d))
-      .catch(err => console.error(err));
+    fetchMirror(mirrorId).then(d => setMirror(d));
+    // .catch(err => console.error(err));
   }, []);
 
   const fallbackUrl = `/${mirrorId}`;
   const mirrorUrl = getUrl(mirror.url ?? fallbackUrl, false);
 
-  const name = mirror.name[language];
+  if (language !== 'zh' && language !== 'en') {
+    throw Error('language out of range');
+  }
+  const name = mirror.name[language as Locale];
   return (
     <Box
       sx={{
@@ -90,11 +92,9 @@ const MirrorDoc = ({ data, children }: { data: Data }) => {
                   </Typography>
                 </Link>
                 <Grid item>
-                  {
-                    /* TODO: add English docs
+                  {/* TODO: add English docs
                     <LanguageIconButton />
-                    */
-                  }
+                    */}
                   <ThemeIconButton />
                 </Grid>
               </Grid>

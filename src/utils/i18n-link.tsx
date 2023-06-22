@@ -6,7 +6,7 @@ import { LinkProps } from '@mui/material';
 
 export function linkWithI18n<
   P extends { to: string; onClick?: React.MouseEventHandler }
-> (Component: React.ComponentType<P>) {
+>(Component: React.ComponentType<P>) {
   return ({ to, language, onClick, ...rest }: P & { language?: string }) => {
     const i18n = useI18next();
     const urlLanguage = language || i18n.language;
@@ -18,7 +18,6 @@ export function linkWithI18n<
     };
     const link = `${getLanguagePath(urlLanguage)}${to}`;
 
-    // @ts-ignore
     return (
       <Component
         to={link}

@@ -17,7 +17,7 @@ import { NewsDto } from '../types/news';
 import { Link } from '../utils/i18n-link';
 import components from './components';
 import { readCache, writeCache } from '../utils/cache';
-import { getUrl } from '../utils/url';
+import getUrl from '../utils/url';
 
 interface Data {
   document: {
@@ -113,9 +113,7 @@ const News = ({ data, children }: { data: Data }) => {
           </Grid>
         </Box>
         <Paper sx={{ px: { xs: 4, sm: 8 }, py: 4 }} elevation={0}>
-          <MDXProvider components={components}>
-            {children}
-          </MDXProvider>
+          <MDXProvider components={components}>{children}</MDXProvider>
         </Paper>
       </Box>
       <Footer />
