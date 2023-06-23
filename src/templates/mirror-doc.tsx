@@ -28,13 +28,18 @@ interface Data {
 }
 
 async function fetchMirror(id: string): Promise<MirrorDto> {
-  const res = await fetch(`/api/mirrors/${id}`);
+  const res = await fetch('/mirror-front/mirror.json');
   if (!res.ok) {
     throw new Error(`API call failed: ${res.status} ${await res.text()}`);
   }
   const json = await res.json();
-  writeCache(`mirrors_${id}`, json);
-  return json;
+  for (let i = 0; i < json.length; i += 1) {
+    if (json[i].id === id) {
+      return json[i];
+    }
+  }
+
+  throw new Error(`Mirror fetch failed: ${id} not exist`);
 }
 
 const MirrorDoc = ({ data, children }: { data: Data; children: any }) => {

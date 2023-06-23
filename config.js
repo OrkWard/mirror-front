@@ -17,5 +17,5 @@ module.exports = {
   locales: ['zh', 'en'],
   siteUrl: 'https://mirrors.zju.edu.cn',
   pathPrefix: '/mirror-front',
-  assetPrefix: '/mirror-front',
+  assetPrefix: '',
 };

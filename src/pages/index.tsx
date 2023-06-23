@@ -58,7 +58,7 @@ const networkMap: {
 };
 
 async function fetchMirrors(): Promise<MirrorDto[]> {
-  const res = await fetch('/api/mirrors');
+  const res = await fetch('/mirror-front/mirror.json');
   if (!res.ok) {
     throw new Error(`API call failed: ${res.status} ${await res.text()}`);
   }
